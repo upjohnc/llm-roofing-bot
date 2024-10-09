@@ -1,9 +1,9 @@
 from pathlib import Path
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.embeddings import OllamaEmbeddings
 from langchain_community.vectorstores import FAISS, VectorStore
 from langchain_core.documents import Document
+from langchain_ollama import OllamaEmbeddings
 
 import constants
 
