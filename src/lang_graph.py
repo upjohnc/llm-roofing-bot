@@ -2,8 +2,8 @@ from complete_response import get_end_response
 from docs_evaluate import grade_docs_for_tavily_search
 from langchain_core.vectorstores import VectorStoreRetriever
 from langgraph.graph import END, START, StateGraph
-from tavily_search import web_search
 from typing_extensions import TypedDict
+
 from vector_store import create_vector_store, get_split_docs
 
 
