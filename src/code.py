@@ -1,14 +1,9 @@
 import sys
 
 from doc_evaluate import grade_docs_on_roofing
+from lang_graph import run_graph
 from llm_response import get_end_response
 from vector_store import create_vector_store, get_split_docs
-
-# question = "what is a roof"
-# question = "what materials are in a roof"
-# question = "what is the weather today"
-# question = "what should I pay for a roof"
-# question = "how much should I pay"
 
 
 def run(question: str):
@@ -32,11 +27,10 @@ if __name__ == "__main__":
         "5": "how much should I pay",
     }
 
-    index_question = "1"
     args = sys.argv
-    if len(args) > 1:
-        index_question = args[1]
+    index_question = "1" if len(args) == 1 else args[1]
 
     question = questions[index_question]
 
-    run(question)
+    result = run_graph(question)
+    print(result)

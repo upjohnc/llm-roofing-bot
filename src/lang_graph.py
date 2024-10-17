@@ -1,9 +1,9 @@
-from complete_response import get_end_response
-from docs_evaluate import grade_docs_for_tavily_search
 from langchain_core.vectorstores import VectorStoreRetriever
 from langgraph.graph import END, START, StateGraph
 from typing_extensions import TypedDict
 
+from doc_evaluate import grade_docs_on_roofing
+from llm_response import get_end_response
 from vector_store import create_vector_store, get_split_docs
 
 
@@ -21,7 +21,7 @@ class GraphState(TypedDict):
     query: str
     generation: str
     retriever: VectorStoreRetriever
-    web_search: bool
+    enough_information: bool
     documents: list[str]
     steps: list[str]
 
@@ -35,36 +35,34 @@ def get_vector_store(state: GraphState) -> dict:
 
 def check_doc_grade(state: GraphState) -> dict:
     state["steps"].append("check_doc_grade")
-    (tavily_search, docs) = grade_docs_for_tavily_search(
-        state["retriever"], state["query"]
-    )
+    (enough_info, docs) = grade_docs_on_roofing(state["retriever"], state["query"])
     return {
         "query": state["query"],
         "retriever": state["retriever"],
         "documents": docs,
-        "web_search": tavily_search,
+        "enough_information": enough_info,
         "steps": state["steps"],
     }
 
 
 def decide_to_generate(state: GraphState) -> str:
-    if state["web_search"] is True:
-        return "search"
+    if state["enough_information"] is False:
+        return "end_conversation"
     return "generate"
 
 
-def web_tavily_search(state: GraphState) -> dict:
-    state["steps"].append("web_tavily_search")
-    # need to set to string
-    # somehow the evaluator does not pass query as a string
-    web_docs = web_search(query=str(state["query"]))
-    state["documents"].extend(web_docs)
-    return {
-        "query": state["query"],
-        "retriever": state["retriever"],
-        "documents": state["documents"],
-        "steps": state["steps"],
-    }
+# def web_tavily_search(state: GraphState) -> dict:
+#     state["steps"].append("web_tavily_search")
+#     # need to set to string
+#     # somehow the evaluator does not pass query as a string
+#     web_docs = web_search(query=str(state["query"]))
+#     state["documents"].extend(web_docs)
+#     return {
+#         "query": state["query"],
+#         "retriever": state["retriever"],
+#         "documents": state["documents"],
+#         "steps": state["steps"],
+#     }
 
 
 def generate(state: GraphState) -> dict:
@@ -74,7 +72,18 @@ def generate(state: GraphState) -> dict:
         "query": state["query"],
         "retriever": state["retriever"],
         "documents": state["documents"],
+        "enough_information": state["enough_information"],
         "generation": response,
+        "steps": state["steps"],
+    }
+
+
+def end_conversation(state: GraphState) -> dict:
+    return {
+        "query": state["query"],
+        "retriever": state["retriever"],
+        "documents": state["documents"],
+        "generation": "I don't know",
         "steps": state["steps"],
     }
 
@@ -83,7 +92,7 @@ def run_graph(query: str) -> dict:
     workflow = StateGraph(GraphState)
     workflow.add_node("vector_retriever", get_vector_store)
     workflow.add_node("doc_grade", check_doc_grade)
-    workflow.add_node("tavily_search", web_tavily_search)
+    workflow.add_node("end_conversation", end_conversation)
     workflow.add_node("generate", generate)
 
     workflow.add_edge(START, "vector_retriever")
@@ -92,10 +101,10 @@ def run_graph(query: str) -> dict:
     workflow.add_conditional_edges(
         "doc_grade",
         decide_to_generate,
-        {"search": "tavily_search", "generate": "generate"},
+        {"end_conversation": "end_conversation", "generate": "generate"},
     )
 
-    workflow.add_edge("tavily_search", "generate")
+    workflow.add_edge("end_conversation", END)
     workflow.add_edge("generate", END)
 
     custom_graph = workflow.compile()
