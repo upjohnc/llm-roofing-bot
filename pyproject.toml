@@ -18,6 +18,8 @@ isort = "5.13.2"
 
 [tool.isort]
 profile = "black"
+line_length = 120
+src_paths = ["src", "tests"]
 
 [tool.black]
 line-length = 90

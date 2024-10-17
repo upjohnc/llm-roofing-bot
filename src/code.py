@@ -1,44 +1,42 @@
-# from complete_response import get_end_response
-# from docs_evaluate import grade_docs_for_tavily_search
-from langchain_core.vectorstores import VectorStoreRetriever
+import sys
 
-# from langgraph.graph import END, START, StateGraph
-from typing_extensions import TypedDict
-
+from doc_evaluate import grade_docs_on_roofing
+from llm_response import get_end_response
 from vector_store import create_vector_store, get_split_docs
 
-
-class GraphState(TypedDict):
-    """
-    State of lang graph
-
-    Attributes:
-        query: query
-        generation: LLM generation
-        search: whether to add search
-        documents: list of documents
-    """
-
-    query: str
-    generation: str
-    retriever: VectorStoreRetriever
-    web_search: bool
-    documents: list[str]
-    steps: list[str]
+# question = "what is a roof"
+# question = "what materials are in a roof"
+# question = "what is the weather today"
+# question = "what should I pay for a roof"
+# question = "how much should I pay"
 
 
-def get_vector_store(state: GraphState) -> dict:
-    state["steps"].append("get_vector_store")
+def run(question: str):
     vector_store = create_vector_store(get_split_docs())
     retriever = vector_store.as_retriever(search_kwargs={"k": 2})
-    return {"query": state["query"], "retriever": retriever, "steps": state["steps"]}
+    enough, docs = grade_docs_on_roofing(retriever, question)
 
-
-def run():
-    vector_store = create_vector_store(get_split_docs())
-    retriever = vector_store.as_retriever(search_kwargs={"k": 2})
-    print(retriever)
+    if enough:
+        response = get_end_response(question, documents=docs)
+    else:
+        response = "I do not know"
+    print(response)
 
 
 if __name__ == "__main__":
-    run()
+    questions = {
+        "1": "what is a roof",
+        "2": "what materials are in a roof",
+        "3": "what is the weather today",
+        "4": "what should I pay for a roof",
+        "5": "how much should I pay",
+    }
+
+    index_question = "1"
+    args = sys.argv
+    if len(args) > 1:
+        index_question = args[1]
+
+    question = questions[index_question]
+
+    run(question)
