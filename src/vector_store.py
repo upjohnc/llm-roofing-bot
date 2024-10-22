@@ -1,7 +1,9 @@
 from pathlib import Path
+from uuid import uuid4
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS, VectorStore
+from langchain_chroma import Chroma
+from langchain_community.vectorstores import VectorStore
 from langchain_core.documents import Document
 from langchain_ollama import OllamaEmbeddings
 
@@ -9,9 +11,10 @@ import constants
 
 
 def get_split_docs() -> list[Document]:
-    file_path = Path(__file__).parent.resolve() / "support" / "roofing.txt"
+    file_path = Path(__file__).parent / "support" / "roofing.txt"
     with open(file_path, "r") as f:
         roofing_docs = f.read()
+
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=constants.CHUNK_SIZE,
         chunk_overlap=20,
@@ -25,7 +28,27 @@ def get_split_docs() -> list[Document]:
     return split_docs
 
 
-def create_vector_store(docs: list[Document]) -> VectorStore:
+def get_vetor_store() -> VectorStore:
     embeddings = OllamaEmbeddings(model=constants.MODEL)
-    vector_store = FAISS.from_documents(docs, embeddings)
-    return vector_store
+    return Chroma(
+        collection_name="roof_docs",
+        embedding_function=embeddings,
+        persist_directory="./chroma_langchain_db",
+    )
+
+
+def create_chroma_db():
+    documents = get_split_docs()
+    uuids = [str(uuid4()) for _ in documents]
+
+    vector_store = get_vetor_store()
+    vector_store.add_documents(documents=documents, ids=uuids)
+
+    # results = vector_store.similarity_search_with_score("What is a roof?", k=1)
+    # for res, score in results:
+    #     print(f"* [SIM={score:3f}] {res.page_content} [{res.metadata}]")
+    print("complete")
+
+
+if __name__ == "__main__":
+    create_chroma_db()
