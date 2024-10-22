@@ -1,22 +1,6 @@
 import sys
 
-from doc_evaluate import grade_docs_on_roofing
 from lang_graph import run_graph
-from llm_response import get_end_response
-from vector_store import create_vector_store, get_split_docs
-
-
-def run(question: str):
-    vector_store = create_vector_store(get_split_docs())
-    retriever = vector_store.as_retriever(search_kwargs={"k": 2})
-    enough, docs = grade_docs_on_roofing(retriever, question)
-
-    if enough:
-        response = get_end_response(question, documents=docs)
-    else:
-        response = "I do not know"
-    print(response)
-
 
 if __name__ == "__main__":
     questions = {

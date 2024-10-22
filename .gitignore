@@ -1,5 +1,6 @@
 .envrc
 .DS_Store
+chroma_langchain_db/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

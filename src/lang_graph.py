@@ -4,7 +4,7 @@ from typing_extensions import TypedDict
 
 from doc_evaluate import grade_docs_on_roofing
 from llm_response import get_end_response
-from vector_store import create_vector_store, get_split_docs
+from vector_store import get_split_docs, get_vetor_store
 
 
 class GraphState(TypedDict):
@@ -28,7 +28,7 @@ class GraphState(TypedDict):
 
 def get_vector_store(state: GraphState) -> dict:
     state["steps"].append("get_vector_store")
-    vector_store = create_vector_store(get_split_docs())
+    vector_store = get_vetor_store()
     retriever = vector_store.as_retriever(search_kwargs={"k": 2})
     return {"query": state["query"], "retriever": retriever, "steps": state["steps"]}
 
@@ -49,20 +49,6 @@ def decide_to_generate(state: GraphState) -> str:
     if state["enough_information"] is False:
         return "end_conversation"
     return "generate"
-
-
-# def web_tavily_search(state: GraphState) -> dict:
-#     state["steps"].append("web_tavily_search")
-#     # need to set to string
-#     # somehow the evaluator does not pass query as a string
-#     web_docs = web_search(query=str(state["query"]))
-#     state["documents"].extend(web_docs)
-#     return {
-#         "query": state["query"],
-#         "retriever": state["retriever"],
-#         "documents": state["documents"],
-#         "steps": state["steps"],
-#     }
 
 
 def generate(state: GraphState) -> dict:
