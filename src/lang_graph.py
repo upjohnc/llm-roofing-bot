@@ -3,7 +3,7 @@ from langgraph.graph import END, START, StateGraph
 from typing_extensions import TypedDict
 
 from doc_evaluate import grade_docs_on_roofing
-from llm_response import get_end_response
+from llm_response import get_end_response, get_llm_response_single_call
 from vector_store import get_vetor_store
 
 
@@ -26,7 +26,7 @@ class GraphState(TypedDict):
     steps: list[str]
 
 
-def get_vector_store(state: GraphState) -> dict:
+def get_vector_retriever(state: GraphState) -> dict:
     state["steps"].append("get_vector_store")
     vector_store = get_vetor_store()
     retriever = vector_store.as_retriever(search_kwargs={"k": 2})
@@ -74,9 +74,13 @@ def end_conversation(state: GraphState) -> dict:
     }
 
 
-def run_graph(query: str) -> dict:
+def run_graph_one_call(query: str):
+    print(get_llm_response_single_call(query))
+
+
+def run_graph_two_call(query: str) -> dict:
     workflow = StateGraph(GraphState)
-    workflow.add_node("vector_retriever", get_vector_store)
+    workflow.add_node("vector_retriever", get_vector_retriever)
     workflow.add_node("doc_grade", check_doc_grade)
     workflow.add_node("end_conversation", end_conversation)
     workflow.add_node("generate", generate)
