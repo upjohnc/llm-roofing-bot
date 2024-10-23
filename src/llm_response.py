@@ -5,7 +5,7 @@ from langchain_core.vectorstores import VectorStoreRetriever
 from langchain_ollama import ChatOllama
 
 import constants
-from vector_store import get_vetor_store
+from vector_store import get_vector_store
 
 
 def get_end_response(question, documents):
@@ -31,7 +31,7 @@ def get_end_response(question, documents):
 
 
 def get_retriever() -> VectorStoreRetriever:
-    vector_store = get_vetor_store()
+    vector_store = get_vector_store()
     return vector_store.as_retriever(search_kwargs={"k": 2})
 
 

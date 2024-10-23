@@ -28,7 +28,7 @@ def get_split_docs() -> list[Document]:
     return split_docs
 
 
-def get_vetor_store() -> VectorStore:
+def get_vector_store() -> VectorStore:
     embeddings = OllamaEmbeddings(model=constants.MODEL)
     return Chroma(
         collection_name="roof_docs",
@@ -41,7 +41,7 @@ def create_chroma_db():
     documents = get_split_docs()
     uuids = [str(uuid4()) for _ in documents]
 
-    vector_store = get_vetor_store()
+    vector_store = get_vector_store()
     vector_store.add_documents(documents=documents, ids=uuids)
 
     # results = vector_store.similarity_search_with_score("What is a roof?", k=1)

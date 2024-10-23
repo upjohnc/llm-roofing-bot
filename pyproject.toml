@@ -12,6 +12,7 @@ langgraph = "^0.2.35"
 faiss-cpu = "^1.9.0"
 langchain-ollama = "^0.2.0"
 langchain-chroma = "^0.1.4"
+click = "^8.1.7"
 
 [tool.poetry.group.dev.dependencies]
 black = "24.10.0"
