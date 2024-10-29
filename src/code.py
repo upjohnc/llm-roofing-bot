@@ -1,6 +1,6 @@
 import click
 
-from lang_graph import run_graph_one_call, run_graph_two_call
+from chat_calls import run_graph_one_call, run_graph_two_call
 
 
 @click.command

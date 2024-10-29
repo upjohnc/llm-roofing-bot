@@ -44,9 +44,6 @@ def create_chroma_db():
     vector_store = get_vector_store()
     vector_store.add_documents(documents=documents, ids=uuids)
 
-    # results = vector_store.similarity_search_with_score("What is a roof?", k=1)
-    # for res, score in results:
-    #     print(f"* [SIM={score:3f}] {res.page_content} [{res.metadata}]")
     print("complete")
 
 
