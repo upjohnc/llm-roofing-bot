@@ -4,7 +4,11 @@ from chat_calls import run_graph_one_call, run_graph_two_call
 
 
 @click.command
-@click.option("--call-type", help="one_call or two_call")
+@click.option(
+    "--call-type",
+    type=click.Choice(["one_call", "two_call"]),
+    help="one_call or two_call",
+)
 @click.option("--question-number", default=1, help="number of the question to use")
 def main(call_type, question_number):
     questions = {
@@ -25,5 +29,37 @@ def main(call_type, question_number):
     print(result)
 
 
+def other():
+    print()
+    print("I am an information source on roofing and", flush=True)
+    print("am here to help you inform yourself for", flush=True)
+    print("when you need to re-roof your house.", flush=True)
+    print()
+
+    while True:
+        print()
+        question = input("Roofing Question > ")
+        if not question:
+            continue
+        if question.strip().lower() in ["/quit", "/q"]:
+            break
+
+        result = run_graph_two_call(question)
+        print()
+        print(result["response"])
+
+        if result["grade"]["score"] == 0:
+            what = (
+                "\n\nYour question may be outside of what I know."
+                "\nMay we call you to discuss your question further?"
+            )
+            print(what)
+            call_request = input("(yes or no) > ")
+            if call_request.strip().lower() == "yes":
+                phone_number = input("what number may we reach you at? > ")
+                print(f"Number where to call: {phone_number}")
+
+
 if __name__ == "__main__":
-    main()
+    other()
+    # main()

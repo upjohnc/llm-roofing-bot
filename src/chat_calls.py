@@ -45,7 +45,9 @@ def run_graph_two_call(query: str) -> dict:
     else:
         _ = save_unanswered_questions(query)
         final_response = (
-            "I do not know the answer to the question.  May we call you to discuss?"
+            "My knowledge base is limited roofs and the process of re-roofing."
+            "\nI am happy to share this knowledge with you and help to make informed"
+            "\ndecisions."
         )
 
     return dict(
