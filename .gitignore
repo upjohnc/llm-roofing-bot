@@ -1,6 +1,7 @@
 .envrc
 .DS_Store
 chroma_langchain_db/
+unanswered_query/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
