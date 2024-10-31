@@ -3,14 +3,7 @@ import click
 from chat_calls import run_graph_one_call, run_graph_two_call
 
 
-@click.command
-@click.option(
-    "--call-type",
-    type=click.Choice(["one_call", "two_call"]),
-    help="one_call or two_call",
-)
-@click.option("--question-number", default=1, help="number of the question to use")
-def main(call_type, question_number):
+def simple_call(call_type: str, question_number: int) -> None:
     questions = {
         1: "what is a roof?",
         2: "what materials are in a roof?",
@@ -29,7 +22,7 @@ def main(call_type, question_number):
     print(result)
 
 
-def other():
+def cli_chat():
     print()
     print("I am an information source on roofing and", flush=True)
     print("am here to help you inform yourself for", flush=True)
@@ -60,6 +53,23 @@ def other():
                 print(f"Number where to call: {phone_number}")
 
 
+@click.command
+@click.option(
+    "--call-type",
+    type=click.Choice(["one_call", "two_call", "cli"]),
+    help="one_call or two_call",
+)
+@click.option(
+    "--question-number",
+    default=1,
+    help="number of the question to use\nused in junction with one_call and two_call",
+)
+def main(call_type, question_number):
+    if call_type == "cli":
+        _ = cli_chat()
+    else:
+        _ = simple_call(call_type, question_number)
+
+
 if __name__ == "__main__":
-    other()
-    # main()
+    main()
