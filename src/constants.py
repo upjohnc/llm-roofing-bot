@@ -1,2 +1,2 @@
-CHUNK_SIZE = 500
+CHUNK_SIZE = 750
 MODEL = "llama3.2"
