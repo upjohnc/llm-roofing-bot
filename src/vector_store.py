@@ -50,7 +50,7 @@ def get_split_docs(dir: str) -> list[Document]:
 
 
 def get_vector_store() -> VectorStore:
-    embeddings = OllamaEmbeddings(model=constants.MODEL)
+    embeddings = OllamaEmbeddings(model=constants.EMBEDDING_MODEL)
     return Chroma(
         collection_name="roof_docs",
         embedding_function=embeddings,
