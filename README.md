@@ -40,9 +40,9 @@ information added to the vector store.
 
 ## Usage
 
-The llm model is `llama3.2`.  You can have the ollama running locally
-with `llama3.2` loaded.  Instructions can be found at the ollama site
-`https://ollama.com/`.
+The llm model is `llama3.2` and the embedding model is `mxbai-embed-large`.
+You can have the ollama running locally with `llama3.2` and `mxbai-embed-large` loaded.
+Instructions can be found at the ollama site `https://ollama.com/`.
 
 The project runs with poetry package manager.  You can install
 it locally with `pip install poetry`.
