@@ -37,20 +37,21 @@ def cli_chat():
         if question.strip().lower() in ["/quit", "/q"]:
             break
 
-        result = run_graph_two_call(question)
-        print()
-        print(result["response"])
+        result = run_graph_one_call(question)
 
-        if result["grade"]["score"] == 0:
-            what = (
-                "\n\nYour question may be outside of what I know."
+        print()
+        if result["grade"] == 0:
+            phone_request = (
+                "\nYour question may be outside of what I know."
                 "\nMay we call you to discuss your question further?"
             )
-            print(what)
+            print(phone_request)
             call_request = input("(yes or no) > ")
             if call_request.strip().lower() == "yes":
                 phone_number = input("what number may we reach you at? > ")
                 print(f"Number where to call: {phone_number}")
+        else:
+            print(result["response"])
 
 
 @click.command

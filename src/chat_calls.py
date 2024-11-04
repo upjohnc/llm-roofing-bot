@@ -26,12 +26,12 @@ def save_unanswered_questions(query: str) -> None:
 
 def run_graph_one_call(query: str):
     response = get_llm_response_single_call(query)
-    if "don't know" in response.lower():
+    grade = 1
+    if "don't know" in response.lower() or "do not know" in response.lower():
         _ = save_unanswered_questions(query)
+        grade = 0
 
-    print(response)
-
-    return 1
+    return dict(response=response, grade=grade)
 
 
 def run_graph_two_call(query: str) -> dict:
@@ -52,5 +52,5 @@ def run_graph_two_call(query: str) -> dict:
 
     return dict(
         response=final_response,
-        grade=grade,
+        grade=grade.get("score"),
     )
