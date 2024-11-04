@@ -34,7 +34,8 @@ people think is the best solution.
 
 ### Save unknown queries
 
-A feature to add to the code is saving queries that aren't answered.
+When the llm cannot answer a query because the vector store
+does not have information based on the query, the query is saved.
 The list of unanswered queries can be reviewed later and then
 information added to the vector store.
 
